@@ -85,7 +85,7 @@ class TextResult {
   factory TextResult.fromJson(Map<String, dynamic> json) {
     return TextResult(
       text: json['text'] as String,
-      bbox: BBox.fromJson(json['bbox'] as Map<String, dynamic>),
+      bbox: BBox.fromJson(json['bbox'] as List<dynamic>),
     );
   }
 
@@ -109,7 +109,7 @@ class Reference {
 
   factory Reference.fromJson(Map<String, dynamic> json) {
     return Reference(
-      bbox: BBox.fromJson(json['bbox'] as Map<String, dynamic>),
+      bbox: BBox.fromJson(json['bbox'] as List<dynamic>),
       text: json['text'] as String,
       figureId: json['figure_id'] as String? ?? '',
       notMatched: json['not_matched'] as bool? ?? false,
@@ -143,10 +143,10 @@ class Figure {
 
   factory Figure.fromJson(Map<String, dynamic> json) {
     return Figure(
-      bbox: BBox.fromJson(json['bbox'] as Map<String, dynamic>),
+      bbox: BBox.fromJson(json['bbox'] as List<dynamic>),
       pageIdx: (json['page_idx'] as num).toInt(),
-      figureId: json['figure_id'] as String? ?? '',
-      type: json['type'] as String,
+      figureId: json['id'] as String? ?? '',
+      type: json['block_type'] as String,
       text: json['text'] as String,
     );
   }
@@ -155,8 +155,8 @@ class Figure {
     return {
       'bbox': bbox.toJson(),
       'page_idx': pageIdx,
-      'figure_id': figureId,
-      'type': type,
+      'id': figureId,
+      'block_type': type,
       'text': text,
     };
   }

@@ -86,6 +86,7 @@ flutter:
     - assets/sample.pdf
     - assets/sample_ocr_test.pdf
     - assets/ocr_result.json
+    - .env
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

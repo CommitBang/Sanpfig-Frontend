@@ -21,7 +21,7 @@ class DummyOcrService implements OCRProvider {
   @override
   Future<OCRResult> process(String pdfPath) async {
     return const OCRResult(
-      metadata: Metadata(title: 'test', author: 'test', pages: 0),
+      metadata: Metadata(title: 'test', pages: 0),
       pages: [],
       figures: [],
     );
