@@ -478,7 +478,7 @@ class _SimpleDraggableAIChatState extends State<SimpleDraggableAIChat>
                           Text(
                             'Thinking...',
                             style: theme.textTheme.bodyMedium?.copyWith(
-                              color: theme.colorScheme.onSurfaceVariant,
+                              color: theme.colorScheme.onSecondaryContainer,
                             ),
                           ),
                         ],
@@ -489,7 +489,7 @@ class _SimpleDraggableAIChatState extends State<SimpleDraggableAIChat>
                           color:
                               message.isUser
                                   ? theme.colorScheme.onPrimary
-                                  : theme.colorScheme.onSurface,
+                                  : theme.colorScheme.onSecondaryContainer,
                         ),
                       ),
             ),

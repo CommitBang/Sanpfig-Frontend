@@ -25,8 +25,12 @@ class OCRProviderImpl extends OCRProvider {
     httpClient.badCertificateCallback = (cert, host, port) => true;
 
     // 연결 안정성을 위한 설정
-    httpClient.connectionTimeout = const Duration(seconds: 30);
-    httpClient.idleTimeout = const Duration(seconds: 60);
+    httpClient.connectionTimeout = const Duration(minutes: 5);
+    httpClient.idleTimeout = const Duration(minutes: 35);
+
+    // 긴 스트림 처리를 위한 추가 설정
+    httpClient.maxConnectionsPerHost = 10;
+    httpClient.autoUncompress = false; // 압축 해제 비활성화로 스트림 안정성 향상
 
     // User-Agent 설정
     httpClient.userAgent = 'Snapfig/1.0';
@@ -49,6 +53,9 @@ class OCRProviderImpl extends OCRProvider {
           http.MultipartRequest('POST', analyzeUri)
             ..headers['Accept'] = 'text/event-stream'
             ..headers['Cache-Control'] = 'no-cache'
+            ..headers['Connection'] = 'keep-alive'
+            ..headers['Keep-Alive'] =
+                'timeout=2100, max=1000' // 35분 타임아웃
             ..files.add(
               http.MultipartFile.fromBytes(
                 'file',
@@ -72,10 +79,14 @@ class OCRProviderImpl extends OCRProvider {
 
       String buffer = '';
       int chunkCount = 0;
+      DateTime lastChunkTime = DateTime.now();
 
       await for (final chunk in response.stream.transform(utf8.decoder)) {
         chunkCount++;
-        debugPrint('청크 #$chunkCount 수신: ${chunk.length} characters');
+        lastChunkTime = DateTime.now();
+        debugPrint(
+          '청크 #$chunkCount 수신: ${chunk.length} characters (${lastChunkTime.toIso8601String()})',
+        );
         debugPrint('청크 내용: "$chunk"');
 
         buffer += chunk;
