@@ -60,7 +60,7 @@ class _PDFViewerState extends State<PDFViewer> {
     if (layout.type != LayoutType.figure) return;
     final pageNumber = _viewModel!.getPageNumberForFigure(layout);
     if (pageNumber == null) return;
-    _pdfController.goToPage(pageNumber: pageNumber);
+    _pdfController.goToPage(pageNumber: pageNumber + 1);
   }
 
   void _showFigurePopover(BaseLayout reference, Offset tapPosition) {
@@ -167,18 +167,7 @@ class _PDFViewerState extends State<PDFViewer> {
       listenable: _viewModel!,
       builder: (context, child) {
         return Scaffold(
-          appBar: AppBar(
-            title: Text(_viewModel!.pdfTitle),
-            actions: [
-              IconButton(
-                onPressed: () {
-                  Navigator.of(context).pushNamed('/ai-settings');
-                },
-                icon: const Icon(Icons.smart_toy),
-                tooltip: 'AI 설정',
-              ),
-            ],
-          ),
+          appBar: AppBar(title: Text(_viewModel!.pdfTitle)),
           body: Row(
             children: [
               Expanded(

@@ -15,13 +15,12 @@ class BBox {
     return {'x': x, 'y': y, 'width': width, 'height': height};
   }
 
-  factory BBox.fromJson(Map<String, dynamic> json) {
-    return BBox(
-      x: (json['x'] as num).toDouble(),
-      y: (json['y'] as num).toDouble(),
-      width: (json['width'] as num).toDouble(),
-      height: (json['height'] as num).toDouble(),
-    );
+  factory BBox.fromJson(List json) {
+    final x1 = (json[0] as num).toDouble();
+    final y1 = (json[1] as num).toDouble();
+    final x2 = (json[2] as num).toDouble();
+    final y2 = (json[3] as num).toDouble();
+    return BBox(x: x1, y: y1, width: x2 - x1, height: y2 - y1);
   }
 
   @override

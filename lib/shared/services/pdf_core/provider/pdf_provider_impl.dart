@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:typed_data';
 import 'dart:ui';
 
+import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:snapfig/shared/services/ocr_core/ocr_core.dart';
 import 'package:snapfig/shared/services/pdf_core/models/models.dart';
@@ -110,6 +111,7 @@ class PDFProviderImpl<OCR extends OCRProvider> extends PDFProvider {
       final ocrResult = await ocrProvider.process(pdfPath);
       sendPort.send(ocrResult);
     } catch (e) {
+      debugPrint('Fail: $e');
       sendPort.send(null);
     }
   }

@@ -41,9 +41,13 @@ class _PDFSideBarState extends State<PDFSideBar> {
         children: [
           SegmentedButton<_PDFSideBarTab>(
             showSelectedIcon: true,
-            segments: const [
-              ButtonSegment(value: _PDFSideBarTab.page, label: Text('Outline')),
-              ButtonSegment(
+            segments: [
+              if (widget.viewModel.outlines.isNotEmpty)
+                const ButtonSegment(
+                  value: _PDFSideBarTab.page,
+                  label: Text('Outline'),
+                ),
+              const ButtonSegment(
                 value: _PDFSideBarTab.figure,
                 label: Text('Figure'),
               ),

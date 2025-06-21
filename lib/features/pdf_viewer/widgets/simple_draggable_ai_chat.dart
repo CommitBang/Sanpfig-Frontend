@@ -3,6 +3,7 @@ import 'package:snapfig/shared/services/ai_service/ai_service.dart';
 import 'package:snapfig/shared/services/ai_service/models/ai_provider.dart';
 import 'package:snapfig/shared/services/pdf_core/models/models.dart';
 import 'package:snapfig/features/pdf_viewer/models/pdf_data_viewmodel.dart';
+import 'package:gpt_markdown/gpt_markdown.dart';
 
 class Message {
   final String content;
@@ -49,9 +50,17 @@ class _SimpleDraggableAIChatState extends State<SimpleDraggableAIChat>
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
   bool _isDragging = false;
+  bool _isResizing = false;
 
-  static const double _chatWidth = 320.0;
-  static const double _chatHeight = 400.0;
+  // Size variables
+  double _chatWidth = 400.0;
+  double _chatHeight = 500.0;
+
+  // Size constraints
+  static const double _minWidth = 300.0;
+  static const double _maxWidth = 600.0;
+  static const double _minHeight = 400.0;
+  static const double _maxHeight = 800.0;
 
   @override
   void initState() {
@@ -203,36 +212,109 @@ class _SimpleDraggableAIChatState extends State<SimpleDraggableAIChat>
                 _position = _snapToEdges(_position, screenSize);
               });
             },
-            child: Container(
-              width: _chatWidth,
-              height: _chatHeight,
-              decoration: BoxDecoration(
-                color: theme.colorScheme.surface,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color:
-                      _isDragging
-                          ? theme.colorScheme.primary.withValues(alpha: 0.5)
-                          : theme.colorScheme.outline.withValues(alpha: 0.2),
-                  width: _isDragging ? 2 : 1,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(
-                      alpha: _isDragging ? 0.3 : 0.15,
+            child: Stack(
+              children: [
+                Container(
+                  width: _chatWidth,
+                  height: _chatHeight,
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.surface,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color:
+                          _isDragging || _isResizing
+                              ? theme.colorScheme.primary.withValues(alpha: 0.5)
+                              : theme.colorScheme.outline.withValues(
+                                alpha: 0.2,
+                              ),
+                      width: _isDragging || _isResizing ? 2 : 1,
                     ),
-                    blurRadius: _isDragging ? 20 : 10,
-                    offset: Offset(0, _isDragging ? 8 : 4),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(
+                          alpha: _isDragging || _isResizing ? 0.3 : 0.15,
+                        ),
+                        blurRadius: _isDragging || _isResizing ? 20 : 10,
+                        offset: Offset(0, _isDragging || _isResizing ? 8 : 4),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              child: Column(
-                children: [
-                  _buildDraggableHeader(context),
-                  Expanded(child: _buildMessageList(context)),
-                  _buildInputSection(context),
-                ],
-              ),
+                  child: Column(
+                    children: [
+                      _buildDraggableHeader(context),
+                      Expanded(child: _buildMessageList(context)),
+                      _buildInputSection(context),
+                    ],
+                  ),
+                ),
+                // Resize handle
+                Positioned(
+                  right: 0,
+                  bottom: 0,
+                  child: GestureDetector(
+                    onPanStart: (details) {
+                      setState(() {
+                        _isResizing = true;
+                      });
+                    },
+                    onPanUpdate: (details) {
+                      setState(() {
+                        // Update size based on drag delta
+                        _chatWidth = (_chatWidth + details.delta.dx).clamp(
+                          _minWidth,
+                          _maxWidth,
+                        );
+                        _chatHeight = (_chatHeight + details.delta.dy).clamp(
+                          _minHeight,
+                          _maxHeight,
+                        );
+
+                        // Ensure window stays within screen bounds after resizing
+                        final screenSize = MediaQuery.of(context).size;
+                        if (_position.dx + _chatWidth > screenSize.width) {
+                          _position = Offset(
+                            screenSize.width - _chatWidth,
+                            _position.dy,
+                          );
+                        }
+                        if (_position.dy + _chatHeight > screenSize.height) {
+                          _position = Offset(
+                            _position.dx,
+                            screenSize.height - _chatHeight,
+                          );
+                        }
+                      });
+                    },
+                    onPanEnd: (details) {
+                      setState(() {
+                        _isResizing = false;
+                      });
+                    },
+                    child: Container(
+                      width: 20,
+                      height: 20,
+                      decoration: BoxDecoration(
+                        color:
+                            _isResizing
+                                ? theme.colorScheme.primary
+                                : theme.colorScheme.surfaceVariant,
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(4),
+                          bottomRight: Radius.circular(16),
+                        ),
+                      ),
+                      child: Icon(
+                        Icons.drag_handle,
+                        size: 12,
+                        color:
+                            _isResizing
+                                ? theme.colorScheme.onPrimary
+                                : theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ),
@@ -245,7 +327,7 @@ class _SimpleDraggableAIChatState extends State<SimpleDraggableAIChat>
     final configurations = AIService.instance.configurations;
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
         color:
             _isDragging
@@ -270,17 +352,8 @@ class _SimpleDraggableAIChatState extends State<SimpleDraggableAIChat>
           ),
           Row(
             children: [
-              Icon(
-                Icons.smart_toy,
-                color:
-                    _isDragging
-                        ? theme.colorScheme.onPrimaryContainer
-                        : theme.colorScheme.primary,
-                size: 20,
-              ),
-              const SizedBox(width: 8),
               Text(
-                'AI Assistant',
+                'Assistant',
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w600,
                   color:
@@ -405,18 +478,18 @@ class _SimpleDraggableAIChatState extends State<SimpleDraggableAIChat>
                           Text(
                             'Thinking...',
                             style: theme.textTheme.bodyMedium?.copyWith(
-                              color: theme.colorScheme.onSurfaceVariant,
+                              color: theme.colorScheme.onSecondaryContainer,
                             ),
                           ),
                         ],
                       )
-                      : Text(
+                      : GptMarkdown(
                         message.content,
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color:
                               message.isUser
                                   ? theme.colorScheme.onPrimary
-                                  : theme.colorScheme.onSurface,
+                                  : theme.colorScheme.onSecondaryContainer,
                         ),
                       ),
             ),
@@ -559,18 +632,7 @@ class _SimpleDraggableAIChatState extends State<SimpleDraggableAIChat>
                   ),
                   Row(
                     children: [
-                      Icon(
-                        Icons.smart_toy,
-                        color: theme.colorScheme.primary,
-                        size: 20,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        'AI Assistant',
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
+                      Text('Assistant', style: theme.textTheme.titleMedium),
                       const Spacer(),
                       IconButton(
                         onPressed: _closeWithAnimation,

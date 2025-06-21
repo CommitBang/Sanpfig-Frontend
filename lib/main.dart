@@ -2,8 +2,10 @@
 
 // lib/main.dart
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:logging/logging.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:snapfig/features/home/screens/home_widget.dart';
 import 'package:snapfig/features/settings/ai_settings_screen.dart';
@@ -14,6 +16,14 @@ import 'core/theme/theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  if (kDebugMode) {
+    Logger.root.level = Level.ALL;
+    Logger.root.onRecord.listen((record) {
+      debugPrint(
+        '(${record.time}) ${record.level.name} - ${record.loggerName}: ${record.message}',
+      );
+    });
+  }
   await dotenv.load(fileName: '.env');
   final dir = await getApplicationCacheDirectory();
   final pdfProvider = await PDFProviderImpl.load(
