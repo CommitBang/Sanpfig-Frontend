@@ -60,7 +60,7 @@ class _PDFViewerState extends State<PDFViewer> {
     if (layout.type != LayoutType.figure) return;
     final pageNumber = _viewModel!.getPageNumberForFigure(layout);
     if (pageNumber == null) return;
-    _pdfController.goToPage(pageNumber: pageNumber);
+    _pdfController.goToPage(pageNumber: pageNumber + 1);
   }
 
   void _showFigurePopover(BaseLayout reference, Offset tapPosition) {

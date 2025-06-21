@@ -16,12 +16,11 @@ class BBox {
   }
 
   factory BBox.fromJson(List json) {
-    return BBox(
-      x: (json[0] as num).toDouble(),
-      y: (json[1] as num).toDouble(),
-      width: (json[2] as num).toDouble(),
-      height: (json[3] as num).toDouble(),
-    );
+    final x1 = (json[0] as num).toDouble();
+    final y1 = (json[1] as num).toDouble();
+    final x2 = (json[2] as num).toDouble();
+    final y2 = (json[3] as num).toDouble();
+    return BBox(x: x1, y: y1, width: x2 - x1, height: y2 - y1);
   }
 
   @override
