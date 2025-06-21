@@ -3,6 +3,7 @@ import 'package:snapfig/shared/services/ai_service/ai_service.dart';
 import 'package:snapfig/shared/services/ai_service/models/ai_provider.dart';
 import 'package:snapfig/shared/services/pdf_core/models/models.dart';
 import 'package:snapfig/features/pdf_viewer/models/pdf_data_viewmodel.dart';
+import 'package:gpt_markdown/gpt_markdown.dart';
 
 class Message {
   final String content;
@@ -50,8 +51,8 @@ class _SimpleDraggableAIChatState extends State<SimpleDraggableAIChat>
   late Animation<double> _scaleAnimation;
   bool _isDragging = false;
 
-  static const double _chatWidth = 320.0;
-  static const double _chatHeight = 400.0;
+  static const double _chatWidth = 400.0;
+  static const double _chatHeight = 500.0;
 
   @override
   void initState() {
@@ -245,7 +246,7 @@ class _SimpleDraggableAIChatState extends State<SimpleDraggableAIChat>
     final configurations = AIService.instance.configurations;
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
         color:
             _isDragging
@@ -410,7 +411,7 @@ class _SimpleDraggableAIChatState extends State<SimpleDraggableAIChat>
                           ),
                         ],
                       )
-                      : Text(
+                      : GptMarkdown(
                         message.content,
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color:

@@ -50,6 +50,7 @@ dependencies:
   http: ^1.4.0
   flutter_client_sse: ^2.0.3
   flutter_dotenv: ^5.1.0
+  gpt_markdown: ^1.0.20
 
 dev_dependencies:
   flutter_test:
@@ -67,6 +68,9 @@ dev_dependencies:
   isar_generator: ^3.1.0+1
   build_runner: ^2.4.13
   mockito: ^5.4.4
+
+dependency_overrides:
+  flutter_math_fork: 0.7.3
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

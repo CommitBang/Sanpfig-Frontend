@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:snapfig/shared/services/pdf_core/pdf_core.dart';
+import 'package:gpt_markdown/gpt_markdown.dart';
 
 class FigureSidebar extends StatelessWidget {
   final List<BaseLayout> figures;
@@ -18,7 +19,7 @@ class FigureSidebar extends StatelessWidget {
       itemBuilder: (context, index) {
         return ListTile(
           leading: _buildThumbnail(figures[index], context: context),
-          title: Text(figures[index].figureId ?? ''),
+          title: GptMarkdown(figures[index].figureId ?? '', maxLines: 2),
           trailing: const Icon(Icons.chevron_right),
           onTap: () => onFigureSelected(figures[index]),
         );
