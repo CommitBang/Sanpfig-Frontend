@@ -19,7 +19,7 @@ class FigureSidebar extends StatelessWidget {
       itemBuilder: (context, index) {
         return ListTile(
           leading: _buildThumbnail(figures[index], context: context),
-          title: GptMarkdown(figures[index].figureId ?? '', maxLines: 2),
+          title: GptMarkdown(figures[index].text ?? '', maxLines: 2),
           trailing: const Icon(Icons.chevron_right),
           onTap: () => onFigureSelected(figures[index]),
         );
