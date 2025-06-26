@@ -233,6 +233,10 @@ SOFTWARE.
 
 ---
 
+## Contributors
+- jaeho0718 (이재호)
+- JuhwanLee99 (이주환)
+
 <div align="center">
 
 **SnapFig과 함께 더 스마트한 학습을 시작하세요! 📚✨**
